@@ -16,6 +16,19 @@ id="org.apache.cordova.media"
     <js-module src="www/Media.js" name="Media">
         <clobbers target="window.Media" />
     </js-module>
+
+    <!-- firefoxos -->
+    <platform name="firefoxos">
+        <config-file target="config.xml" parent="/*">
+            <feature name="Media" value="Media">
+                <param name="firefox-package" value="Media" />
+            </feature>
+        </config-file>
+
+        <js-module src="src/firefoxos/Media.js" name="FxosMedia">
+            <merges target="window.Media" />
+        </js-module>
+    </platform>
     
     <!-- android -->
     <platform name="android">
