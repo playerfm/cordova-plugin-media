@@ -26,7 +26,8 @@ module.exports = {
 
     create: function (win, fail, args) {
         if (!args.length) {
-            return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+            fail("Media Object id was not sent in arguments");
+            return;
         }
 
         var id = args[0],
@@ -95,20 +96,21 @@ module.exports = {
           Media.onStatus(id, Media.MEDIA_ERROR, errMsg);
         };
 
-        return {"status" : 1, "message" : "Audio object created" };
+        win("Audio object created");
     },
 
     startPlayingAudio: function (win, fail, args) {
         if (!args.length) {
-            return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+            fail("Media Object id was not sent in arguments");
+            return;
         }
 
         var id = args[0],
-            audio = audioObjects[id],
-            result;
+            audio = audioObjects[id];
 
         if (args.length === 1 || typeof args[1] == "undefined" ) {
-            return {"status" : 9, "message" : "Media source argument not found"};
+            fail("Media source argument not found");
+            return;
         }
 
         // event listeners
@@ -125,103 +127,108 @@ module.exports = {
 
         audio.play();
 
-        return {"status" : 1, "message" : "Audio play started" };
+        win("Audio play started");
     },
 
     stopPlayingAudio: function (win, fail, args) {
         if (!args.length) {
-            return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+            fail("Media Object id was not sent in arguments");
+            return; 
         }
 
         var id = args[0],
-            audio = audioObjects[id],
-            result;
+            audio = audioObjects[id];
 
         if (!audio) {
-            return {"status" : 2, "message" : "Audio Object has not been initialized"};
+            fail("Audio Object has not been initialized");
+            return;
         }
 
         audio.pause();
         audioObjects[id] = undefined;
 
-        return {"status" : 1, "message" : "Audio play stopped" };
+        win("Audion play stopped");
     },
 
     seekToAudio: function (win, fail, args) {
         if (!args.length) {
-            return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+            fail("Media Object id was not sent in arguments");
+            return;
         }
 
         var id = args[0],
-            audio = audioObjects[id],
-            result;
+            audio = audioObjects[id];
 
         if (!audio) {
-            result = {"status" : 2, "message" : "Audio Object has not been initialized"};
+            fail("Audio Object has not been initialized");
         } else if (args.length === 1) {
-            result = {"status" : 9, "message" : "Media seek time argument not found"};
+            fail("Media seek time argument not found");
         } else {
             try {
                 audio.currentTime = args[1];
             } catch (e) {
-                return {"status" : 3, "message" : "Error seeking audio: " + e};
+                fail("Error seeking audio: " + e);
+                return;
             }
-
-            result = {"status" : 1, "message" : "Seek to audio succeeded" };
+  
+            win("Seek to audio succeeded");
         }
-        return result;
     },
 
     pausePlayingAudio: function (win, fail, args) {
         if (!args.length) {
-            return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+            fail("Media Object id was not sent in arguments");
+            return;
         }
 
         var id = args[0],
-            audio = audioObjects[id],
-            result;
+            audio = audioObjects[id];
 
         if (!audio) {
-            return {"status" : 2, "message" : "Audio Object has not been initialized"};
+            fail("Audio Object has not been initialized");
+            return;
         }
 
         audio.pause();
 
-        return {"status" : 1, "message" : "Audio paused" };
+        win("Audio paused");
     },
 
     getCurrentPositionAudio: function (win, fail, args) {
         if (!args.length) {
-            return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+            fail("Media Object id was not sent in arguments");
+            return;
         }
 
         var id = args[0],
-            audio = audioObjects[id],
-            result;
+            audio = audioObjects[id];
 
         if (!audio) {
-            return {"status" : 2, "message" : "Audio Object has not been initialized"};
+            fail("Audio Object has not been initialized");
+            return;
         }
 
         Media.onStatus(id, Media.MEDIA_POSITION, audio.currentTime);
 
-        return {"status" : 1, "message" : audio.currentTime };
+        win(audio.currentTime);
     },
 
     startRecordingAudio: function (win, fail, args) {
         if (!args.length) {
-            return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+            fail("Media Object id was not sent in arguments");
+            return;
         }
 
         if (args.length <= 1) {
-            return {"status" : 9, "message" : "Media start recording, insufficient arguments"};
+            fail("Media start recording, insufficient arguments");
+            return;
         }
 
-        blackberry.media.microphone.record(args[1], win, fail);
-        return { "status" : cordova.callbackStatus.NO_RESULT, "message" : "WebWorks Is On It" };
+        // TODO: Start recording
     },
 
     stopRecordingAudio: function (win, fail, args) {
+        // TODO: Stop recording
     },
 
     release: function (win, fail, args) {
@@ -230,8 +237,7 @@ module.exports = {
         }
 
         var id = args[0],
-            audio = audioObjects[id],
-            result;
+            audio = audioObjects[id];
 
         if (audio) {
             if(audio.src !== ""){
@@ -241,11 +247,9 @@ module.exports = {
             delete audioObjects[id];
         }
 
-        result = {"status" : 1, "message" : "Media resources released"};
-
-        return result;
+        win("Media resources released");
     }
-
 };
 
 require('cordova/firefoxos/commandProxy').add('Media', module.exports);
+
