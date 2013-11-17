@@ -232,8 +232,9 @@ module.exports = {
 
 
     release: function (win, fail, args) {
-        if (!args.length) {
-            return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
+        if (typeof args == 'undefined' || !args.length) {
+            fail("Media Object id was not sent in arguments");
+            return;
         }
 
         var id = args[0],
