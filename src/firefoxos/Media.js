@@ -95,13 +95,10 @@ module.exports = {
 
           Media.onStatus(id, Media.MEDIA_ERROR, errMsg);
         };
-
-        win("Audio object created");
     },
 
     startPlayingAudio: function (win, fail, args) {
         if (!args.length) {
-            fail("Media Object id was not sent in arguments");
             return;
         }
 
@@ -109,7 +106,6 @@ module.exports = {
             audio = audioObjects[id];
 
         if (args.length === 1 || typeof args[1] == "undefined" ) {
-            fail("Media source argument not found");
             return;
         }
 
@@ -126,8 +122,6 @@ module.exports = {
         audio.addEventListener('stalled', audio.onStalled);
 
         audio.play();
-
-        win("Audio play started");
     },
 
     stopPlayingAudio: function (win, fail, args) {
@@ -190,8 +184,6 @@ module.exports = {
         }
 
         audio.pause();
-
-        win("Audio paused");
     },
 
     getCurrentPositionAudio: function (win, fail, args) {
@@ -231,6 +223,14 @@ module.exports = {
         // TODO: Stop recording
     },
 
+    setVolume: function(win, fail, args) {
+        var id = args[0],
+            volume = args[1];
+
+        audioObjects[id].volume = volume;
+    },
+
+
     release: function (win, fail, args) {
         if (!args.length) {
             return {"status" : 9, "message" : "Media Object id was not sent in arguments"};
@@ -246,8 +246,6 @@ module.exports = {
             audioObjects[id] = undefined;
             delete audioObjects[id];
         }
-
-        win("Media resources released");
     }
 };
 
