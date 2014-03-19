@@ -251,4 +251,3 @@ module.exports = {
 };
 
 require('cordova/firefoxos/commandProxy').add('Media', module.exports);
-
