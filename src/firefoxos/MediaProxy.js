@@ -33,7 +33,6 @@ module.exports = {
             src = args[1],
             thisM = Media.get(id);
 
-        Media.onStatus(id, Media.MEDIA_STATE, Media.MEDIA_STARTING);
         Media.prototype.node = null;
 
         if (typeof src == "undefined"){
@@ -42,20 +41,13 @@ module.exports = {
             thisM.node = new Audio(src);
         }
 
-        // TODO: Firefox OS Hack: play audio in background
-        thisM.node.preload = 'auto'
-        thisM.node.mozAudioChannelType = 'content'
+        Media.onStatus(id, Media.MEDIA_STATE, Media.MEDIA_STARTING);
 
         // Media Events
         // TODO: add stalled, canplay, and timeupdate events
-        thisM.node.onStalled = function() {
-        };
-
-        thisM.node.onCanPlay = function() {
-        };
-
-        thisM.node.onTimeUpdate = function() {
-        };
+        thisM.node.onStalled = function() { };
+        thisM.node.onCanPlay = function() { };
+        thisM.node.onTimeUpdate = function() { };
 
         thisM.node.onEnded = function() {
           Media.onStatus(id, Media.MEDIA_STATE, Media.MEDIA_STOPPED);
