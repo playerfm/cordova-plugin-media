@@ -1,4 +1,4 @@
-/*
+cordova.define("org.apache.cordova.media.FxosMedia", function(require, exports, module) { /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,8 +19,7 @@
  *
 */
 
-var cordova = require('cordova'),
-    audioObjects = {};
+var cordova = require('cordova');
 
 module.exports = {
 
@@ -31,48 +30,54 @@ module.exports = {
         }
 
         var id = args[0],
-            src = args[1];
+            src = args[1],
+            thisM = Media.get(id);
 
         Media.onStatus(id, Media.MEDIA_STATE, Media.MEDIA_STARTING);
+        Media.prototype.node = null;
 
         if (typeof src == "undefined"){
-            audioObjects[id] = new Audio();
+            thisM.node = new Audio();
         } else {
-            audioObjects[id] = new Audio(src);
+            thisM.node = new Audio(src);
         }
+
+        // TODO: Firefox OS Hack: play audio in background
+        thisM.node.preload = 'auto'
+        thisM.node.mozAudioChannelType = 'content'
 
         // Media Events
         // TODO: add stalled, canplay, and timeupdate events
-        audioObjects[id].onStalled = function() {
+        thisM.node.onStalled = function() {
         };
 
-        audioObjects[id].onCanPlay = function() {
+        thisM.node.onCanPlay = function() {
         };
 
-        audioObjects[id].onTimeUpdate = function() {
+        thisM.node.onTimeUpdate = function() {
         };
 
-        audioObjects[id].onEnded = function() {
+        thisM.node.onEnded = function() {
           Media.onStatus(id, Media.MEDIA_STATE, Media.MEDIA_STOPPED);
         };
 
-        audioObjects[id].onDurationChange = function() {
+        thisM.node.onDurationChange = function() {
           Media.onStatus(id, Media.MEDIA_DURATION, this.duration);
         };
 
-        audioObjects[id].onPlaying = function() {
+        thisM.node.onPlaying = function() {
           Media.onStatus(id, Media.MEDIA_STATE, Media.MEDIA_RUNNING);
         };
 
-        audioObjects[id].onPlay = function() {
+        thisM.node.onPlay = function() {
           Media.onStatus(id, Media.MEDIA_STATE, Media.MEDIA_STARTING);
         };
 
-        audioObjects[id].onPause = function() {
+        thisM.node.onPause = function() {
           Media.onStatus(id, Media.MEDIA_STATE, Media.MEDIA_PAUSED);
         };
 
-        audioObjects[id].onError = function(e) {
+        thisM.node.onError = function(e) {
           // audio playback failed - show a message saying why
           // to get the source of the audio element use $(this).src
           switch (e.target.error.code) {
@@ -103,25 +108,25 @@ module.exports = {
         }
 
         var id = args[0],
-            audio = audioObjects[id];
+            thisM = Media.get(id);
 
         if (args.length === 1 || typeof args[1] == "undefined" ) {
             return;
         }
 
         // event listeners
-        audio.addEventListener('durationchange', audio.onDurationChange);
-        audio.addEventListener('canplay', audio.onCanPlay);
-        audio.addEventListener('ended', audio.onEnded);
-        audio.addEventListener('timeupdate', audio.onTimeUpdate);
-        audio.addEventListener('durationchange', audio.onDurationChange);
-        audio.addEventListener('playing', audio.onPlaying);
-        audio.addEventListener('play', audio.onPlay);
-        audio.addEventListener('pause', audio.onPause);
-        audio.addEventListener('error', audio.onError);
-        audio.addEventListener('stalled', audio.onStalled);
+        thisM.node.addEventListener('durationchange', thisM.node.onDurationChange);
+        thisM.node.addEventListener('canplay', thisM.node.onCanPlay);
+        thisM.node.addEventListener('ended', thisM.node.onEnded);
+        thisM.node.addEventListener('timeupdate', thisM.node.onTimeUpdate);
+        thisM.node.addEventListener('durationchange', thisM.node.onDurationChange);
+        thisM.node.addEventListener('playing', thisM.node.onPlaying);
+        thisM.node.addEventListener('play', thisM.node.onPlay);
+        thisM.node.addEventListener('pause', thisM.node.onPause);
+        thisM.node.addEventListener('error', thisM.node.onError);
+        thisM.node.addEventListener('stalled', thisM.node.onStalled);
 
-        audio.play();
+        thisM.node.play();
     },
 
     stopPlayingAudio: function (win, fail, args) {
@@ -131,15 +136,15 @@ module.exports = {
         }
 
         var id = args[0],
-            audio = audioObjects[id];
+            thisM = Media.get(id);
 
-        if (!audio) {
+        if (!thisM) {
             fail("Audio Object has not been initialized");
             return;
         }
 
-        audio.pause();
-        audioObjects[id] = undefined;
+        thisM.node.pause();
+        thisM = undefined;
 
         win("Audion play stopped");
     },
@@ -151,20 +156,20 @@ module.exports = {
         }
 
         var id = args[0],
-            audio = audioObjects[id];
+            thisM = Media.get(id);
 
-        if (!audio) {
+        if (!thisM) {
             fail("Audio Object has not been initialized");
         } else if (args.length === 1) {
             fail("Media seek time argument not found");
         } else {
             try {
-                audio.currentTime = args[1];
+                thisM.node.currentTime = args[1];
             } catch (e) {
                 fail("Error seeking audio: " + e);
                 return;
             }
-  
+
             win("Seek to audio succeeded");
         }
     },
@@ -176,14 +181,14 @@ module.exports = {
         }
 
         var id = args[0],
-            audio = audioObjects[id];
+            thisM = Media.get(id);
 
-        if (!audio) {
+        if (!thisM) {
             fail("Audio Object has not been initialized");
             return;
         }
 
-        audio.pause();
+        thisM.node.pause();
     },
 
     getCurrentPositionAudio: function (win, fail, args) {
@@ -193,16 +198,16 @@ module.exports = {
         }
 
         var id = args[0],
-            audio = audioObjects[id];
+            thisM = Media.get(id);
 
-        if (!audio) {
+        if (!thisM) {
             fail("Audio Object has not been initialized");
             return;
         }
 
-        Media.onStatus(id, Media.MEDIA_POSITION, audio.currentTime);
+        Media.onStatus(id, Media.MEDIA_POSITION, thisM.node.currentTime);
 
-        win(audio.currentTime);
+        win(thisM.node.currentTime);
     },
 
     startRecordingAudio: function (win, fail, args) {
@@ -225,9 +230,10 @@ module.exports = {
 
     setVolume: function(win, fail, args) {
         var id = args[0],
+            thisM = Media.get(id),
             volume = args[1];
 
-        audioObjects[id].volume = volume;
+        thisM.node.volume = volume;
     },
 
 
@@ -238,16 +244,17 @@ module.exports = {
         }
 
         var id = args[0],
-            audio = audioObjects[id];
+            thisM = Media.get(id);
 
-        if (audio) {
-            if(audio.src !== ""){
-                audio.src = undefined;
+        if (thisM) {
+            if(thisM.node.src !== ""){
+                thisM.node.src = undefined;
             }
-            audioObjects[id] = undefined;
-            delete audioObjects[id];
+            thisM = undefined;
+            delete id;
         }
     }
 };
 
 require('cordova/firefoxos/commandProxy').add('Media', module.exports);
+});
