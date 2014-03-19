@@ -35,3 +35,29 @@
 * Rename plugin id from AudioHandler -> media
 * [CB-4763] Remove reference to cordova-android's FileHelper.
 * [CB-4752] Incremented plugin version on dev branch.
+
+### 0.2.4 (Oct 9, 2013)
+* [CB-4928] plugin-media doesn't load on windows8
+* [CB-4915] Incremented plugin version on dev branch.
+
+### 0.2.5 (Oct 28, 2013)
+* CB-5128: add repo + issue tag to plugin.xml for media plugin
+* [CB-5010] Incremented plugin version on dev branch.
+
+ 
+### 0.2.6 (Dec 4, 2013)
+* [ubuntu] specify policy_group
+* add ubuntu platform
+* Added amazon-fireos platform. Change to use amazon-fireos as a platform if the user agent string contains 'cordova-amazon-fireos'
+
+### 0.2.7 (Jan 02, 2014)
+* CB-5658 Add doc/index.md for Media plugin
+* Adding READ_PHONE_STATE to the plugin permissions
+
+### 0.2.8 (Feb 05, 2014)
+* Add preliminary support for Tizen.
+* [CB-4755] Fix crash in Media.setVolume on iOS
+
+### 0.2.9 (Feb 26, 2014)
+* CB-6051 Update media plugin to work with new cdvfile:// urls
+* CB-5748 Make sure that Media.onStatus is called when recording is started.
