@@ -28,7 +28,7 @@ id="org.apache.cordova.media"
             </feature>
         </config-file>
 
-        <js-module src="src/firefoxos/Media.js" name="FxosMedia">
+        <js-module src="src/firefoxos/MediaProxy.js" name="FxosMedia">
             <merges target="window.Media" />
         </js-module>
     </platform>
